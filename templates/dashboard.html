@@ -1,15 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Bem-vindo ao Dashboard</h1>
-    <div>
-        {{ dashboard_html|safe }}
+  <div class="container container-wide">
+    <div class="header-row">
+      <h1>Dashboard</h1>
+      <a class="link" href="/logout">Logout</a>
     </div>
-    <a href="/">Sair</a>
+
+    {% if dashboard_url %}
+      <div class="embed-wrap">
+        <iframe
+          src="{{ dashboard_url }}"
+          title="Power BI Dashboard"
+          frameborder="0"
+          allowfullscreen="true"
+        ></iframe>
+      </div>
+    {% else %}
+      <!-- Fallback legado: aceita HTML pronto (menos seguro). Prefira dashboard_url. -->
+      <div class="embed-wrap">
+        {{ dashboard_html|safe }}
+      </div>
+    {% endif %}
+  </div>
 </body>
 </html>
