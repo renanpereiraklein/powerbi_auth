@@ -100,4 +100,39 @@ def dashboard():
     if not login_required():
         return redirect(url_for("login"))
 
-    username = session.get("us
+    username = session.get("user", "")
+    user = _get_user(username)
+    if not user:
+        session.clear()
+        return redirect(url_for("login"))
+
+    # Preferível: URL (mais seguro)
+    dashboard_url = user.get("dashboard_url", "").strip()
+
+    # Fallback legado: HTML pronto (menos seguro)
+    dashboard_html = user.get("dashboard", "")
+
+    return render_template(
+        "dashboard.html",
+        username=username,
+        dashboard_url=dashboard_url,
+        dashboard_html=dashboard_html
+    )
+
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+@app.errorhandler(405)
+def method_not_allowed(_e):
+    # se baterem com método estranho, redireciona pro login
+    return redirect(url_for("login"))
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
+    app.run(host="0.0.0.0", port=port, debug=debug)
